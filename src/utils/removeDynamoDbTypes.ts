@@ -31,6 +31,5 @@ export function removeDynamoDBTypes(data: any): Item[]{
         result.push(convertedData)
     });
 
-    console.log("result", result)
     return result
 };

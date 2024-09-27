@@ -18,7 +18,7 @@ export function countFireworkIds(items: Item[]){
         const fireworkIds = Object.keys(item.fireworksData);
 
         fireworkIds.forEach(id => {
-            if(idCount[id]){
+            if(idCount[id] !== undefined){
                 idCount[id]++;
             }
         });
