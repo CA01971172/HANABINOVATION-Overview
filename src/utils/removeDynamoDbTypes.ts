@@ -8,12 +8,11 @@ export function removeDynamoDBTypes(data: any): Item[]{
     data.Items.forEach((item: any) => {
         const fireworksData = item.fireworksData.M
         const convertedFireworksData: Record<string, Firework> = Object.keys(fireworksData).reduce((acc, key) => {
-            console.log("fireworksData", fireworksData)
             acc[key] = {
                 createdAt: fireworksData[key].M.createdAt.N,
                 sparksType: fireworksData[key].M.sparksType.N,
                 fireworkType: fireworksData[key].M.fireworkType.N,
-                ...((fireworksData[key].fireworkDesign?.S !== undefined) && { fireworkDesign: fireworksData[key].M.fireworkDesign.S })
+                ...((fireworksData[key].M.fireworkDesign?.S !== undefined) && { fireworkDesign: fireworksData[key].M.fireworkDesign.S })
             };
             return acc;
         }, {} as Record<string, Firework>);
@@ -32,5 +31,6 @@ export function removeDynamoDBTypes(data: any): Item[]{
         result.push(convertedData)
     });
 
+    console.log("result", result)
     return result
 };
