@@ -9,7 +9,6 @@ import {
 } from "chart.js"
 import { Bar } from "react-chartjs-2"
 import { BOOTH_ID_LIST, SCHOOL_DATA } from "./../utils/config"
-import { Item } from "../utils/types"
 import { countFireworkIds } from "../utils/usageStatistics"
 import { analysisData } from "../utils/analysisData"
 
