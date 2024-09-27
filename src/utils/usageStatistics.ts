@@ -1,5 +1,4 @@
 /* スタンプポイント毎のスタンプが押された量の統計に必要な関数 */
-
 import { BOOTH_ID_LIST } from "./config";
 import { Item } from "./types";
 

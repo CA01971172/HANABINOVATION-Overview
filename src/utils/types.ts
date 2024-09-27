@@ -2,7 +2,7 @@ export type Firework = {
     createdAt: number;
     sparksType: number;
     fireworkType: number;
-    fireworkDesign: string;
+    fireworkDesign?: string;
 };
 
 export type Profile = {
@@ -13,7 +13,7 @@ export type Profile = {
 export type Item = {
     id: string;
     fireworksData: Record<string, Firework>;
-    profile: Profile;
+    profile?: Profile;
 };
 
 export type DynamoDBData = {
