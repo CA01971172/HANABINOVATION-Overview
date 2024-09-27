@@ -18,14 +18,14 @@ export default function MainTabs(props: { tabData: TabData[]}) {
                         setTabIndex(newValue)
                     }}
                 >
-                    {props.tabData.map((tab) => (
-                        <Tab label={tab.tabName}/>
+                    {props.tabData.map((tab, index) => (
+                        <Tab key={index} label={tab.tabName}/>
                     ))}
                 </Tabs>
             </Box>
             {props.tabData.map((tab, index) => (
                 (tabIndex === index) && (
-                    <Box>
+                    <Box key={index}>
                         {tab.element}
                     </Box>
                 )
