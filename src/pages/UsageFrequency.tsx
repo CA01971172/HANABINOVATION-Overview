@@ -177,14 +177,13 @@ export default function UsageFrequency() {
         });
     }, []);
 
-    const labels = ["7","8", "9", "10", "11", "12", "13", "14", "15", "16", "17","18"];
+    const labels = ["8", "9", "10", "11", "12", "13", "14", "15", "16", "17","18"];
     const graphData = {
         labels: labels,
         datasets: [
             {
                 label: "2024-07-13",
                 data: [
-                    0,
                     dayonecount.eightcount,
                     dayonecount.ninecount,
                     dayonecount.tencount,
