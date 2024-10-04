@@ -201,7 +201,6 @@ export default function UsageFrequency() {
             {
                 label: "2024-07-14",
                 data: [
-                    0,
                     daytwocount.eightcount,
                     daytwocount.ninecount,
                     daytwocount.tencount,
