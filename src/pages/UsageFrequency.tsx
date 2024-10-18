@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import data1 from "../output.json";
+import { analysisData } from "../utils/analysisData";
 
 const initialDayCounts = {
     eightcount: 0,
@@ -48,10 +48,11 @@ export default function UsageFrequency() {
     };
 
     useEffect(() => {
-        data1.Items.forEach(item => {
-            const fireworksKeys = Object.keys(item.fireworksData.M);
+        analysisData.forEach(item => {
+            const fireworksKeys = Object.keys(item.fireworksData);
+            console.log(fireworksKeys)
             fireworksKeys.forEach(key => {
-                const createdAt = parseInt(item.fireworksData.M[key].M.createdAt.N);
+                const createdAt = item.fireworksData[key].createdAt;
                 // 8時から9時までのカウント
                 if (createdAt >= dayonetime && createdAt < dayonetime + 1 * hour) {
                     setDayonecount(prevCounts => ({
