@@ -23,8 +23,7 @@ analysisData.forEach(item => {
 });    // ここまでは関係無いコード。参考用。実装時は削除して構いません
 
 // 確率表示用のコンポーネント
-function NavigationPercentage({ percentages, movements, pinX, pinY }: { percentages: number[], movements: {toBoothId: string, probability: number}[], pinX: number, pinY: number }) {
-    // 試用中
+function NavigationPercentage({ percentages, pinX, pinY }: { percentages: number[],  pinX: number, pinY: number }) {
     analysisData.forEach(item => {
         const fireworksKeys =  Object.keys(item.fireworksData);
         fireworksKeys.forEach(id => {
@@ -32,8 +31,8 @@ function NavigationPercentage({ percentages, movements, pinX, pinY }: { percenta
                 idCount[id]++;
             }
         });
+        console.log("countedData", idCount)
     })
-    // 試用中終了
     return (
         <div style={{
             position: "absolute",
@@ -51,25 +50,14 @@ function NavigationPercentage({ percentages, movements, pinX, pinY }: { percenta
             <div style={{color: "#FFA500"}}>🔥 {percentages[0]}%</div>
             <div style={{color: "#00BFFF"}}>💧 {percentages[1]}%</div>
             <div style={{color: "#32CD32"}}>🍃 {idCount["id"]}%</div>
-            <div style={{ marginTop: "1vw" }}>
-                <h4>移動先の確率</h4>
-                <ul style={{ listStyleType: "none", padding: 0 }}>
-                    {movements.map((movement, index) => (
-                        <li key={index}>
-                            {SCHOOL_DATA[movement.toBoothId].schoolName}: {movement.probability}%
-                        </li>
-                    ))}
-                </ul>
-            </div>
         </div>
     );
 }
 
 export default function RoutePrediction(items:Item[]) {
     const [postedBoothIdList, setPostedBoothIdList] = useState<string[]>([]);
-    const [selectedBoothId, setSelectedBoothId] = useState<string | null>(null);
+    const [hoveredBoothId, setHoveredBoothId] = useState<string | null>(null);
     const [percentages] = useState<number[]>([50, 20, 100]); // %の中身
-    const [movements] = useState<{toBoothId: string, probability: number}[]>([]);
     const [tooltipPosition, setTooltipPosition] = useState({ pinX: 0, pinY: 0 });
 
     const getPinStyle = (pinX: number, pinY: number, boothId: string): CSSProperties => ({
@@ -98,17 +86,22 @@ export default function RoutePrediction(items:Item[]) {
         }`;
     };
 
-    const handlePinClick = (boothId: string, pinX: number, pinY: number) => {
-        // ピンがクリックされたときの処理
-        setSelectedBoothId(boothId);
+    const handleMouseEnter = (boothId: string, pinX: number, pinY: number) => {
+        // ピンにカーソルが乗ったときの処理
+        setHoveredBoothId(boothId);
         setTooltipPosition({ pinX, pinY });
     };
+    const handleMouseLeave = () => {
+        // ピンからカーソルが離れたときの処理
+        setHoveredBoothId(null);
+    };
+
     return (
         <div>
             <div>スタンプポイントの経路予測</div>
             <style>{getAnimationStyle()}</style>
             <div>
-                <div 
+                <div
                     style={{
                         maxHeight: "100%",
                         width: "100%",
@@ -128,9 +121,14 @@ export default function RoutePrediction(items:Item[]) {
                     {Object.entries(SCHOOL_DATA).map(([boothId, schoolInfo], index) => (
                         <div key={index}>
                             <img
-                                src={postedBoothIdList.includes(boothId) ? createdHanabiPin : `${schoolInfo.mapData.pinImageSrc}`}
+                                src={postedBoothIdList.includes(boothId) ? (
+                                    createdHanabiPin) : (
+                                        `${schoolInfo.mapData.pinImageSrc}`
+                                    )
+                                }
                                 style={getPinStyle(schoolInfo.mapData.pinX, schoolInfo.mapData.pinY, boothId)}
-                                onClick={() => handlePinClick(boothId, schoolInfo.mapData.pinX, schoolInfo.mapData.pinY)} // クリックイベントを追加
+                                onMouseEnter={() => handleMouseEnter(boothId, schoolInfo.mapData.pinX, schoolInfo.mapData.pinY)} // マウスオーバーイベントを追加
+                                onMouseLeave={handleMouseLeave} // マウスアウトイベントを追加
                             />
                             <div
                                 style={{
@@ -157,9 +155,9 @@ export default function RoutePrediction(items:Item[]) {
                     ))}
                 </div>
             </div>
-            {/* ピンがクリックされたら、確率を表示 */}
-            {selectedBoothId && (
-                <NavigationPercentage percentages={percentages} movements={movements} pinX={tooltipPosition.pinX} pinY={tooltipPosition.pinY} />
+            {/* ピンがカーソルが乗ったら、確率を表示 */}
+            {hoveredBoothId && (
+                <NavigationPercentage percentages={percentages} pinX={tooltipPosition.pinX} pinY={tooltipPosition.pinY} />
             )}
         </div>
     )
