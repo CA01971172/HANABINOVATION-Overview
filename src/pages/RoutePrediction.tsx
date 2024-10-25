@@ -1,11 +1,39 @@
 import { CSSProperties, useState } from "react";
+import { Item } from "../utils/types"
 import mapBooth from "../images/マップピン/map_booth.png";
-import { SCHOOL_DATA } from "../utils/config";
+import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削除かも
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
+// ここから
+function testF<T>(arr: string[], value: T): { [key: string]: T }{
+    return arr.reduce((acc, cur) => {
+        acc[cur] = value;
+        return acc;
+    }, {} as { [key: string]: T });
+};
+const idCount: Record<string, number> = testF(BOOTH_ID_LIST, 0); // testF
+analysisData.forEach(item => {
+    const fireworksKeys =  Object.keys(item.fireworksData);
+    fireworksKeys.forEach(id => {
+        if(idCount[id] !== undefined){
+            idCount[id]++;
+        }
+    });
+    return idCount;
+});    // ここまでは関係無いコード。参考用。実装時は削除して構いません
 
 // 確率表示用のコンポーネント
 function NavigationPercentage({ percentages, movements, pinX, pinY }: { percentages: number[], movements: {toBoothId: string, probability: number}[], pinX: number, pinY: number }) {
+    // 試用中
+    analysisData.forEach(item => {
+        const fireworksKeys =  Object.keys(item.fireworksData);
+        fireworksKeys.forEach(id => {
+            if(idCount[id] !== undefined){
+                idCount[id]++;
+            }
+        });
+    })
+    // 試用中終了
     return (
         <div style={{
             position: "absolute",
@@ -22,7 +50,7 @@ function NavigationPercentage({ percentages, movements, pinX, pinY }: { percenta
         }}>
             <div style={{color: "#FFA500"}}>🔥 {percentages[0]}%</div>
             <div style={{color: "#00BFFF"}}>💧 {percentages[1]}%</div>
-            <div style={{color: "#32CD32"}}>🍃 {percentages[2]}%</div>
+            <div style={{color: "#32CD32"}}>🍃 {idCount["id"]}%</div>
             <div style={{ marginTop: "1vw" }}>
                 <h4>移動先の確率</h4>
                 <ul style={{ listStyleType: "none", padding: 0 }}>
@@ -37,11 +65,11 @@ function NavigationPercentage({ percentages, movements, pinX, pinY }: { percenta
     );
 }
 
-export default function RoutePrediction() {
+export default function RoutePrediction(items:Item[]) {
     const [postedBoothIdList, setPostedBoothIdList] = useState<string[]>([]);
     const [selectedBoothId, setSelectedBoothId] = useState<string | null>(null);
-    const [percentages, setPercentages] = useState<number[]>([0, 0, 0]);
-    const [movements, setMovements] = useState<{toBoothId: string, probability: number}[]>([]);
+    const [percentages] = useState<number[]>([50, 20, 100]); // %の中身
+    const [movements] = useState<{toBoothId: string, probability: number}[]>([]);
     const [tooltipPosition, setTooltipPosition] = useState({ pinX: 0, pinY: 0 });
 
     const getPinStyle = (pinX: number, pinY: number, boothId: string): CSSProperties => ({
@@ -74,13 +102,6 @@ export default function RoutePrediction() {
         // ピンがクリックされたときの処理
         setSelectedBoothId(boothId);
         setTooltipPosition({ pinX, pinY });
-
-        // analysisData から対応するデータを取得し、state に設定
-        const boothData = analysisData.find(data => data.boothId === boothId);
-        if (boothData) {
-            setPercentages([boothData.visitPercentage, boothData.usePercentage, boothData.otherPercentage]);
-            setMovements(boothData.movement); // 移動確率を設定
-        }
     };
     return (
         <div>
