@@ -4,36 +4,18 @@ import mapBooth from "../images/マップピン/map_booth.png";
 import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削除かも
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
-// ここから
-function testF<T>(arr: string[], value: T): { [key: string]: T }{
-    return arr.reduce((acc, cur) => {
-        acc[cur] = value;
-        return acc;
-    }, {} as { [key: string]: T });
-};
-// const countedData: Record<string, number> = countFireworkIds(analysisData)
-const idCount: Record<string, number> = testF(BOOTH_ID_LIST, 0); // testF
-analysisData.forEach(item => {
-    const fireworksKeys =  Object.keys(item.fireworksData);
-    fireworksKeys.forEach(id => {
-        if(idCount[id] !== undefined){
-            idCount[id]++;
-        }
-    });
-    return idCount;
-});    // ここまでは関係無いコード(参考用)。実装時は削除します
+
+
+const createdTime = BOOTH_ID_LIST.map((createdAt) => firework[createdAt].mapData);
+console.log(createdTime)
+
+
+
 
 // 確率表示用のコンポーネント
-function NavigationPercentage({ percentages, pinX, pinY }: { percentages: number[],  pinX: number, pinY: number }) {
-    analysisData.forEach(item => {
-        const fireworksKeys =  Object.keys(item.fireworksData);
-        fireworksKeys.forEach(id => {
-            if(idCount[id] !== undefined){
-                idCount[id]++;
-            }
-        });
-        console.log("countedData", idCount)
-    })
+function NavigationPercentage({ percentages, pinX, pinY, }: { percentages: number[],  pinX: number, pinY: number }) {
+// function NavigationPercentage({ pinX, pinY }: { pinX: number, pinY: number }) {
+    // const [percentages] = useState<number[]>(countFireworkIds["HF5W2T", , ]); // %の中身
     return (
         <div style={{
             position: "absolute",
@@ -50,13 +32,13 @@ function NavigationPercentage({ percentages, pinX, pinY }: { percentages: number
         }}>
             <div style={{color: "#FFA500"}}>🔥 {percentages[0]}%</div>
             <div style={{color: "#00BFFF"}}>💧 {percentages[1]}%</div>
-            <div style={{color: "#32CD32"}}>🍃 {idCount["id"]}%</div>
+            {/* <div style={{color: "#32CD32"}}>🍃 {idCount["id"]}%</div> */}
         </div>
     );
 }
 
-export default function RoutePrediction(items:Item[]) {
-    const [postedBoothIdList, setPostedBoothIdList] = useState<string[]>([]);
+export default function RoutePrediction() {
+    const [postedBoothIdList] = useState<string[]>([]);
     const [hoveredBoothId, setHoveredBoothId] = useState<string | null>(null);
     const [percentages] = useState<number[]>([50, 20, 100]); // %の中身
     const [tooltipPosition, setTooltipPosition] = useState({ pinX: 0, pinY: 0 });
