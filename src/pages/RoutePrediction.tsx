@@ -11,6 +11,7 @@ function testF<T>(arr: string[], value: T): { [key: string]: T }{
         return acc;
     }, {} as { [key: string]: T });
 };
+// const countedData: Record<string, number> = countFireworkIds(analysisData)
 const idCount: Record<string, number> = testF(BOOTH_ID_LIST, 0); // testF
 analysisData.forEach(item => {
     const fireworksKeys =  Object.keys(item.fireworksData);
@@ -20,7 +21,7 @@ analysisData.forEach(item => {
         }
     });
     return idCount;
-});    // ここまでは関係無いコード。参考用。実装時は削除して構いません
+});    // ここまでは関係無いコード(参考用)。実装時は削除します
 
 // 確率表示用のコンポーネント
 function NavigationPercentage({ percentages, pinX, pinY }: { percentages: number[],  pinX: number, pinY: number }) {
@@ -155,7 +156,7 @@ export default function RoutePrediction(items:Item[]) {
                     ))}
                 </div>
             </div>
-            {/* ピンがカーソルが乗ったら、確率を表示 */}
+            {/* ピンがカーソルに乗ったら、確率を表示 */}
             {hoveredBoothId && (
                 <NavigationPercentage percentages={percentages} pinX={tooltipPosition.pinX} pinY={tooltipPosition.pinY} />
             )}
