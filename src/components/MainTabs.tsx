@@ -25,7 +25,7 @@ export default function MainTabs(props: { tabData: TabData[]}) {
             </Box>
             {props.tabData.map((tab, index) => (
                 (tabIndex === index) && (
-                    <Box key={index}>
+                    <Box key={index} style={{height: "80vh"}}>
                         {tab.element}
                     </Box>
                 )
