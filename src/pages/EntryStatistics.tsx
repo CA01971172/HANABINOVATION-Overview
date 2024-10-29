@@ -87,6 +87,8 @@ const options = {
 
 export default function EntryStatistics() {
     return (
-        <Pie options={options} data={data} />
+        <div style={{height: "80vh"}}>
+            <Pie options={options} data={data}/>
+        </div>
     )
 }
