@@ -4,14 +4,19 @@ import mapBooth from "../images/マップピン/map_booth.png";
 import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削除かも
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
-const getCreatedAtValues = (items: Item[]) => {
-    return items.flatMap(item =>
-        Object.values(item.fireworksData).map(firework => firework.createdAt)
+
+// boothIdとcreatedAtを配列にまとめる関数
+const getBoothIdAndCreatedAt = (items:Item[]) => {
+    return Object.values(items).flatMap(item =>
+        Object.entries(item.fireworksData).map(([boothId, firework]) => ({
+            boothId,
+            createdAt: firework.createdAt
+        }))
     );
 };
 
-const createdAtData = getCreatedAtValues(analysisData);
-console.log(createdAtData);
+const idData = getBoothIdAndCreatedAt(analysisData);
+console.log(idData);
 
 
 
