@@ -5,28 +5,16 @@ import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削�
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
 
-const getBoothIdAndCreatedAt = (items: Item[]) => {
-    const result: Record<string, Record<string, number>> = {};
-    items.forEach(item => {
-        // 時系列毎に整理
-        const sortedBooths = Object.entries(item.fireworksData)
-            .sort((a, b) => new Date(a[1].createdAt).getTime() - new Date(b[1].createdAt).getTime())
-            .map(([boothId]) => boothId);
-        // 移動回数の格納処理
-        for (let i = 0; i < sortedBooths.length - 1; i++) {
-            const boothId = sortedBooths[i];
-            const nextBoothId = sortedBooths[i + 1];
-            // result に boothId がなければ初期化
-            if (!result[boothId]) {
-                result[boothId] = {};
+function getInitializedBoothData(): Record<string, Record<string, number>>{
+    const result: Record<string, Record<string, number>> = {}
+    BOOTH_ID_LIST.forEach(boothId => {
+        const newBoothData: Record<string, number> = {}
+        BOOTH_ID_LIST.forEach(boothId2 => {
+            if(!newBoothData[boothId] && boothId !== boothId2){
+                newBoothData[boothId] = 0;
             }
-            // result に nextBoothId がなければ初期化
-            if (!result[boothId][nextBoothId]) {
-                result[boothId][nextBoothId] = 0;
-            }
-            // 移動回数の処理
-            result[boothId][nextBoothId]++;
-        }
+        })
+        result[boothId] = newBoothData;
     });
     return result;
 };
@@ -34,12 +22,39 @@ const getBoothIdAndCreatedAt = (items: Item[]) => {
 const idData = getBoothIdAndCreatedAt(analysisData);
 console.log(idData);
 
+const calculateNavigationPercentages = (navigationData: Record<string, Record<string, number>>, boothId: string): number[] => {
+    const nextBooths = navigationData[boothId];
+    if (!nextBooths) return [0, 0]; // 次のブースがない場合は0％で返す
+
+    const totalMoves = Object.values(nextBooths).reduce((sum, count) => sum + count, 0);
+    const percentages = Object.values(nextBooths).map(count => Math.round((count / totalMoves) * 100));
+    
+    return percentages;
+};
+// メインの表示処理
+const App = () => {
+    const navigationData = getBoothIdAndCreatedAt(analysisData);
+    const boothId = "HF5W2T"; // テスト用のブースIDを指定します（動的に設定できます）
+
+    // boothId から次のブースへの移動確率を計算
+    const percentages = calculateNavigationPercentages(navigationData, boothId);
+
+    return (
+        <div>
+            {/* ナビゲーション確率を表示 */}
+            <NavigationPercentage
+                percentages={percentages}
+                pinX={SCHOOL_DATA[boothId].mapData.pinX}
+                pinY={SCHOOL_DATA[boothId].mapData.pinY}
+            />
+        </div>
+    );
+};
 
 
 // 確率表示用のコンポーネント
 function NavigationPercentage({ percentages, pinX, pinY, }: { percentages: number[],  pinX: number, pinY: number }) {
 // function NavigationPercentage({ pinX, pinY }: { pinX: number, pinY: number }) {
-    // const [percentages] = useState<number[]>(countFireworkIds["HF5W2T", , ]); // %の中身
     return (
         <div style={{
             position: "absolute",
