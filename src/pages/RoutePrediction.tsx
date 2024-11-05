@@ -5,19 +5,34 @@ import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削�
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
 
-// boothIdとcreatedAtを配列にまとめる関数
-const getBoothIdAndCreatedAt = (items:Item[]) => {
-    return Object.values(items).flatMap(item =>
-        Object.entries(item.fireworksData).map(([boothId, firework]) => ({
-            boothId,
-            createdAt: firework.createdAt
-        }))
-    );
+const getBoothIdAndCreatedAt = (items: Item[]) => {
+    const result: Record<string, Record<string, number>> = {};
+    items.forEach(item => {
+        // 時系列毎に整理
+        const sortedBooths = Object.entries(item.fireworksData)
+            .sort((a, b) => new Date(a[1].createdAt).getTime() - new Date(b[1].createdAt).getTime())
+            .map(([boothId]) => boothId);
+        // 移動回数の格納処理
+        for (let i = 0; i < sortedBooths.length - 1; i++) {
+            const boothId = sortedBooths[i];
+            const nextBoothId = sortedBooths[i + 1];
+            // result に boothId がなければ初期化
+            if (!result[boothId]) {
+                result[boothId] = {};
+            }
+            // result に nextBoothId がなければ初期化
+            if (!result[boothId][nextBoothId]) {
+                result[boothId][nextBoothId] = 0;
+            }
+            // 移動回数の処理
+            result[boothId][nextBoothId]++;
+        }
+    });
+    return result;
 };
 
 const idData = getBoothIdAndCreatedAt(analysisData);
 console.log(idData);
-
 
 
 
