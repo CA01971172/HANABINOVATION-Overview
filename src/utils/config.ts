@@ -16,10 +16,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原電子ビジネス専門学校",
         color: "#00FFFF",
         mapData: {
-            pinX: 46,
-            pinY: 19,
-            schoolNameX: 12,
-            schoolNameY: 26,
+            pinX: 38.5,
+            pinY: 40,
+            schoolNameX: 15,
+            schoolNameY: 48,
             schoolNameWidth: 52,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_denshi
@@ -29,10 +29,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原外語観光・製菓専門学校",
         color: "#4800FF",
         mapData: {
-            pinX: 3,
-            pinY: 5,
-            schoolNameX: 5,
-            schoolNameY: 5,
+            pinX: 24.5,
+            pinY: 18,
+            schoolNameX: 15,
+            schoolNameY: 26,
             schoolNameWidth: 25,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_gaigoseika
@@ -42,10 +42,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "大原簿記公務員専門学校 愛媛校",
         color: "#FF0000",
         mapData: {
-            pinX: 40,
-            pinY: 5,
+            pinX: 45,
+            pinY: 18,
             schoolNameX: 35,
-            schoolNameY: 5,
+            schoolNameY: 26,
             schoolNameWidth: 26,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_ooharaboki
@@ -55,10 +55,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原アイペットワールド専門学校",
         color: "#FFA500",
         mapData: {
-            pinX: 72,
-            pinY: 5,
-            schoolNameX: 86,
-            schoolNameY: 6,
+            pinX: 73,
+            pinY: 18,
+            schoolNameX: 74,
+            schoolNameY: 26,
             schoolNameWidth: 30,
             writingMode: "vertical-rl",
             pinImageSrc: pin_image_aipetto
@@ -68,10 +68,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原医療大学校",
         color: "#00FF00",
         mapData: {
-            pinX: 13,
-            pinY: 31.5,
-            schoolNameX: 25,
-            schoolNameY: 34,
+            pinX: 32.5,
+            pinY: 52,
+            schoolNameX: 27,
+            schoolNameY: 57,
             schoolNameWidth: 26,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_iryou
@@ -81,10 +81,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原医療福祉専門学校",
         color: "#CDFF00",
         mapData: {
-            pinX: 22,
-            pinY: 47,
-            schoolNameX: 12,
-            schoolNameY: 53,
+            pinX: 34,
+            pinY: 70,
+            schoolNameX: 19,
+            schoolNameY: 78,
             schoolNameWidth: 35,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_iryouhukushi
@@ -94,10 +94,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原ビューティモード専門学校",
         color: "#FF00FF",
         mapData: {
-            pinX: 40,
-            pinY: 60,
-            schoolNameX: 32,
-            schoolNameY: 60,
+            pinX: 46,
+            pinY: 80,
+            schoolNameX: 30,
+            schoolNameY: 87,
             schoolNameWidth: 38,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_beauti
@@ -107,10 +107,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原デザイン・アート専門学校",
         color: "#FFFF00",
         mapData: {
-            pinX: 80,
-            pinY: 42,
-            schoolNameX: 91,
-            schoolNameY: 48,
+            pinX: 73,
+            pinY: 66,
+            schoolNameX: 75,
+            schoolNameY: 72,
             schoolNameWidth: 35,
             writingMode: "vertical-rl",
             pinImageSrc: pin_image_design
@@ -120,10 +120,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "松山デザイナー専門学校",
         color: "#0000FF",
         mapData: {
-            pinX: 8,
-            pinY: 60,
-            schoolNameX: 6,
-            schoolNameY: 60,
+            pinX: 25,
+            pinY: 79.5,
+            schoolNameX: 16,
+            schoolNameY: 87,
             schoolNameWidth: 22,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_matsuyamadesigner
@@ -133,10 +133,10 @@ export const SCHOOL_DATA: { [boothId: string]: SchoolInfo } = {
         schoolName: "河原医療大学校 新居浜校",
         color: "#00FFAC",
         mapData: {
-            pinX: 49,
-            pinY: 50,
-            schoolNameX: 55,
-            schoolNameY: 52,
+            pinX: 55,
+            pinY: 70,
+            schoolNameX: 45,
+            schoolNameY: 78,
             schoolNameWidth: 26,
             writingMode: "horizontal-tb",
             pinImageSrc: pin_image_iryou_niihama
