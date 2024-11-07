@@ -6,7 +6,7 @@ import {
     Legend
 } from "chart.js"
 import { Pie } from "react-chartjs-2"
-import { BOOTH_ID_LIST, SCHOOL_DATA } from "./../utils/config"
+import { SCHOOL_DATA } from "./../utils/config"
 import { analysisData } from "../utils/analysisData"
 import { Item } from "../utils/types"
 
