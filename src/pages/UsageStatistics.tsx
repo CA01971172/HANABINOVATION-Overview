@@ -49,10 +49,10 @@ const data1 = Object.values(countedData)
 const data = {
     labels, // x軸のラベルの配列
     datasets: [
-    {
-        label: "学校名", // データセットのラベル
-        data: data1,      // データの配列(labelsと要素数同じ)
-        backgroundColor // 各データポイントごとに異なる色を指定
+        {
+            label: "学校名", // データセットのラベル
+            data: data1,      // データの配列(labelsと要素数同じ)
+            backgroundColor // 各データポイントごとに異なる色を指定
         }
     ]
 }
