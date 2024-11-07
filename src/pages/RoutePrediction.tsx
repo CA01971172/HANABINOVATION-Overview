@@ -1,17 +1,19 @@
 import { CSSProperties, useState } from "react";
 import { Item } from "../utils/types"
 import mapBooth from "../images/マップピン/map_booth.png";
-import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config"; // SCHOOK_DATA削除かも
+import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config";
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
+import { Doughnut } from 'react-chartjs-2';
 
+// 次に行く地点のタイムスタンプをまとめたオブジェクトを初期化して作成する関数
 function getInitializedBoothData(): Record<string, Record<string, number>>{
-    const result: Record<string, Record<string, number>> = {}
+    const result: Record<string, Record<string, number>> = {};
     BOOTH_ID_LIST.forEach(boothId => {
-        const newBoothData: Record<string, number> = {}
+        const newBoothData: Record<string, number> = {};
         BOOTH_ID_LIST.forEach(boothId2 => {
-            if(!newBoothData[boothId] && boothId !== boothId2){
-                newBoothData[boothId] = 0;
+            if(!newBoothData[boothId2] && boothId !== boothId2){
+                newBoothData[boothId2] = 0;
             }
         })
         result[boothId] = newBoothData;
@@ -19,67 +21,163 @@ function getInitializedBoothData(): Record<string, Record<string, number>>{
     return result;
 };
 
-const idData = getBoothIdAndCreatedAt(analysisData);
-console.log(idData);
+// ユーザーIDからユーザーの花火データを取得する関数
+function getUserData(userId: string): Item | null {
+    return analysisData.find(data => {
+        return data.id === userId;
+    }) || null;
+}
 
-const calculateNavigationPercentages = (navigationData: Record<string, Record<string, number>>, boothId: string): number[] => {
-    const nextBooths = navigationData[boothId];
-    if (!nextBooths) return [0, 0]; // 次のブースがない場合は0％で返す
+const initializedBoothData = getInitializedBoothData()
 
-    const totalMoves = Object.values(nextBooths).reduce((sum, count) => sum + count, 0);
-    const percentages = Object.values(nextBooths).map(count => Math.round((count / totalMoves) * 100));
-    
-    return percentages;
-};
-// メインの表示処理
-const App = () => {
-    const navigationData = getBoothIdAndCreatedAt(analysisData);
-    const boothId = "HF5W2T"; // テスト用のブースIDを指定します（動的に設定できます）
+// ブースごとに
+function calcPercentagesByBooth(userId: string, boothId: string){
+    const userData = getUserData(userId)
+    if(!userData) return
+    if(Object.keys(userData.fireworksData).length < 2) return
+    const object: {createdAtNear: number, boothId: string | null} = {createdAtNear: Infinity, boothId: null}
+    for(const boothIdLoop in userData.fireworksData){
+        if(boothId === boothIdLoop) continue;
+        const diference: number = userData.fireworksData[boothIdLoop].createdAt - userData.fireworksData[boothId].createdAt;
+        if(diference > 0 && diference < object.createdAtNear){
+            object.createdAtNear = userData.fireworksData[boothIdLoop].createdAt;
+            object.boothId = boothIdLoop;
+        }
+    }
+    if(object.boothId === null) return;
+    initializedBoothData[boothId][object.boothId]++;
+}
 
-    // boothId から次のブースへの移動確率を計算
-    const percentages = calculateNavigationPercentages(navigationData, boothId);
+function calcPercentagesRatio(userId: string) {
+    const userData = analysisData.find(data => data.id === userId);
+    if (!userData) return;
+
+    for (const boothIdLoop in userData.fireworksData) {
+        calcPercentagesByBooth(userId, boothIdLoop);
+    }
+}
+function calculateAllUsers() {
+    analysisData.forEach(user => {
+        calcPercentagesRatio(user.id);
+    });
+}
+
+// 例として関数を呼び出して実行
+calculateAllUsers();
+console.log(initializedBoothData);
+
+// 移動割合を計算する関数
+const percentageData: Record<string, Record<string, string>> = {};
+
+// 移動割合を計算する関数
+function calculatePercentages() {
+    for (const boothId in initializedBoothData) {
+        const totalMoves = Object.values(initializedBoothData[boothId]).reduce((acc, count) => acc + count, 0);
+        percentageData[boothId] = {};
+        if (totalMoves > 0) {
+            for (const subBoothId in initializedBoothData[boothId]) {
+                // 割合の計算を小数第1位までにフォーマット
+                percentageData[boothId][subBoothId] = ((initializedBoothData[boothId][subBoothId] / totalMoves) * 100).toFixed(1);
+            }
+        } else {
+            // 移動がない場合は割合を"0.0"に設定
+            for (const subBoothId in initializedBoothData[boothId]) {
+                percentageData[boothId][subBoothId] = "0.0";
+            }
+        }
+    }
+}
+// 移動割合の計算を実行
+calculatePercentages();
+console.log(percentageData);
+
+// percentageDataからデータを取り出して表示する
+interface NavigationPercentageProps {
+    boothId: string;
+    pinX: number;
+    pinY: number;
+}
+
+// percentageDataの取得と円グラフの表示
+function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps) {
+    const percentages = percentageData[boothId];
+
+    // // すべての値が "0.0" の場合、全体を表示しない
+    if (!percentages || ["5HGS6W","7JDZVP","94VPFZ","FZVSW0","HDE5W4","HF5W2T","SHSQ4A","WA067Z", "Y6XBJH", ].every(key => percentages[key] === "0.0")) {
+        return null;
+    }
+    // percentagesのデータを数値の大きい順にソートし、上位3つを取り出す
+    const sortedBoothIds = Object.entries(percentages)
+    .map(([boothId, value]) => ({ boothId, percentage: parseFloat(value) }))
+    .sort((a, b) => b.percentage - a.percentage)
+    .slice(0, 3)
+    .map(entry => entry.boothId); // boothId のみを抽出して string の配列に
+
+// 上位3つのboothIdを変数に代入
+const top1: string = sortedBoothIds[0] || "";
+const top2: string = sortedBoothIds[1] || "";
+const top3: string = sortedBoothIds[2] || "";
+console.log("Top 1 Booth ID:", top1);
+console.log("Top 2 Booth ID:", top2);
+console.log("Top 3 Booth ID:", top3);
+        // チャートデータの設定
+    const data = {
+        // labels: [ top1,top2,top3],
+        labels:sortedBoothIds.map(([id]) => SCHOOL_DATA[id]?.schoolName || id),
+        datasets: [
+            {
+                data: [
+                    parseFloat(percentages[top1]) || 0,
+                    parseFloat(percentages[top2]) || 0,
+                    parseFloat(percentages[top3]) || 0
+                ],
+                backgroundColor: ["#FFA500", "#00BFFF", "#32CD32"],
+            },
+        ],
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: "top" as const,
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context: any) {
+                        return `${context.label}: ${context.raw}%`;
+                    }
+                }
+            }
+        }
+    };
 
     return (
-        <div>
-            {/* ナビゲーション確率を表示 */}
-            <NavigationPercentage
-                percentages={percentages}
-                pinX={SCHOOL_DATA[boothId].mapData.pinX}
-                pinY={SCHOOL_DATA[boothId].mapData.pinY}
-            />
-        </div>
-    );
-};
-
-
-// 確率表示用のコンポーネント
-function NavigationPercentage({ percentages, pinX, pinY, }: { percentages: number[],  pinX: number, pinY: number }) {
-// function NavigationPercentage({ pinX, pinY }: { pinX: number, pinY: number }) {
-    return (
-        <div style={{
-            position: "absolute",
-            top: `${pinY - 10}vh`, // ピンの上に表示するよう調整
-            left: `${pinX}vw`,
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            padding: "1vw",
-            borderRadius: "10px",
-            boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-            zIndex: 1000,
-            fontSize: "1vw",
-            textAlign: "center",
-            width: "12vw"
-        }}>
-            <div style={{color: "#FFA500"}}>🔥 {percentages[0]}%</div>
-            <div style={{color: "#00BFFF"}}>💧 {percentages[1]}%</div>
-            {/* <div style={{color: "#32CD32"}}>🍃 {idCount["id"]}%</div> */}
+        <div
+            style={{
+                position: "absolute",
+                top: `${pinY - 20}vh`,
+                left: `${pinX+4.9}vw`,
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                padding: "1vw",
+                borderRadius: "10px",
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
+                fontSize: "1vw",
+                textAlign: "center",
+                width: "12vw",
+            }}
+        >
+            <Doughnut data={data} options={options} />
         </div>
     );
 }
 
+
 export default function RoutePrediction() {
     const [postedBoothIdList] = useState<string[]>([]);
     const [hoveredBoothId, setHoveredBoothId] = useState<string | null>(null);
-    const [percentages] = useState<number[]>([50, 20, 100]); // %の中身
     const [tooltipPosition, setTooltipPosition] = useState({ pinX: 0, pinY: 0 });
 
     const getPinStyle = (pinX: number, pinY: number, boothId: string): CSSProperties => ({
@@ -179,7 +277,7 @@ export default function RoutePrediction() {
             </div>
             {/* ピンがカーソルに乗ったら、確率を表示 */}
             {hoveredBoothId && (
-                <NavigationPercentage percentages={percentages} pinX={tooltipPosition.pinX} pinY={tooltipPosition.pinY} />
+                <NavigationPercentage boothId={hoveredBoothId} pinX={tooltipPosition.pinX} pinY={tooltipPosition.pinY} />
             )}
         </div>
     )
