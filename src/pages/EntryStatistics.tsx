@@ -57,7 +57,11 @@ const labels = sortedEntries.map(([id]) => SCHOOL_DATA[id]?.schoolName || id);
 const dataValues = sortedEntries.map(([, count]) => count);
 
 //色分け
-const backgroundColor = BOOTH_ID_LIST.map((boothId) => SCHOOL_DATA[boothId].color);
+
+const backgroundColor = sortedEntries.map((entries) => {
+    const boothId: string = entries[0];
+    return SCHOOL_DATA[boothId].color;
+});
 
 //円グラフ設定
 const data = {
