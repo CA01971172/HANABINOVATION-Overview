@@ -133,15 +133,22 @@ function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps
     const sortedBoothIds = Object.entries(percentages)
     .map(([boothId, value]) => ({ boothId, percentage: parseFloat(value) }))
     .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 3)
+    .slice(0, 9)
     .map(entry => entry.boothId);
     // 上位3つのboothIdを変数に代入
     const top1: string = sortedBoothIds[0] || "";
     const top2: string = sortedBoothIds[1] || "";
     const top3: string = sortedBoothIds[2] || "";
+    const top4: string = sortedBoothIds[3] || "";
+    const top5: string = sortedBoothIds[4] || "";
+    const top6: string = sortedBoothIds[5] || "";
+    const top7: string = sortedBoothIds[6] || "";
+    const top8: string = sortedBoothIds[7] || "";
+    const top9: string = sortedBoothIds[8] || "";
+    const top10: string = sortedBoothIds[9] || "";
     // SCHOOL_NAMEからschoolNameを、SCHOOL_DATAからcolorを取得
     const labels = [SCHOOL_NAME[top1].schoolName, SCHOOL_NAME[top2].schoolName, SCHOOL_NAME[top3].schoolName];
-    const backgroundColor = [SCHOOL_DATA[top1].color, SCHOOL_DATA[top2].color, SCHOOL_DATA[top3].color];
+    const backgroundColor = [SCHOOL_DATA[top1].color, SCHOOL_DATA[top2].color, SCHOOL_DATA[top3].color,SCHOOL_DATA[top4].color, SCHOOL_DATA[top5].color, SCHOOL_DATA[top6].color,SCHOOL_DATA[top7].color, SCHOOL_DATA[top8].color, SCHOOL_DATA[top9].color, SCHOOL_DATA[top10]?.color || "#FFA500"];
     // チャートデータの設定
     const data = {
         labels: labels,
@@ -150,7 +157,14 @@ function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps
                 data: [
                     parseFloat(percentages[top1]) || 0,
                     parseFloat(percentages[top2]) || 0,
-                    parseFloat(percentages[top3]) || 0
+                    parseFloat(percentages[top3]) || 0,
+                    parseFloat(percentages[top4]) || 0,
+                    parseFloat(percentages[top5]) || 0,
+                    parseFloat(percentages[top6]) || 0,
+                    parseFloat(percentages[top7]) || 0,
+                    parseFloat(percentages[top8]) || 0,
+                    parseFloat(percentages[top9]) || 0,
+                    parseFloat(percentages[top10]) || 0
                 ],
                 backgroundColor: backgroundColor,
             },
