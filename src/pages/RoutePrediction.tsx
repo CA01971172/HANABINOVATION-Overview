@@ -6,6 +6,39 @@ import createdHanabiPin from "../images/マップピン/花火作成済みマッ
 import { analysisData } from "../utils/analysisData";
 import { Doughnut } from 'react-chartjs-2';
 
+// 名前変更
+const SCHOOL_NAME: { [boothId: string]: { schoolName: string } } = {
+    "HF5W2T": {
+        schoolName: "電子ビジネス　　"
+    },
+    "Y6XBJH": {
+        schoolName: "外語観光・製菓　"
+    },
+    "7JDZVP": {
+        schoolName: "大原簿記　　　　"
+    },
+    "SHSQ4A": {
+        schoolName: "アイペット　　　"
+    },
+    "FZVSW0": {
+        schoolName: "医療大学校　　　"
+    },
+    "WA067Z": {
+        schoolName: "医療福祉　　　　"
+    },
+    "94VPFZ": {
+        schoolName: "ビューティモード"
+    },
+    "5HGS6W": {
+        schoolName: "デザイン・アート"
+    },
+    "HDE5W4": {
+        schoolName: "松山デザイナー　"
+    },
+    "Y9KFFH": {
+        schoolName: "医療（新居浜校）"
+    }
+};
 // 次に行く地点のタイムスタンプをまとめたオブジェクトを初期化して作成する関数
 function getInitializedBoothData(): Record<string, Record<string, number>>{
     const result: Record<string, Record<string, number>> = {};
@@ -29,7 +62,6 @@ function getUserData(userId: string): Item | null {
 }
 
 const initializedBoothData = getInitializedBoothData()
-
 // ブースごとに
 function calcPercentagesByBooth(userId: string, boothId: string){
     const userData = getUserData(userId)
@@ -51,7 +83,6 @@ function calcPercentagesByBooth(userId: string, boothId: string){
 function calcPercentagesRatio(userId: string) {
     const userData = analysisData.find(data => data.id === userId);
     if (!userData) return;
-
     for (const boothIdLoop in userData.fireworksData) {
         calcPercentagesByBooth(userId, boothIdLoop);
     }
@@ -64,11 +95,8 @@ function calculateAllUsers() {
 
 // 例として関数を呼び出して実行
 calculateAllUsers();
-console.log(initializedBoothData);
 
-// 移動割合を計算する関数
 const percentageData: Record<string, Record<string, string>> = {};
-
 // 移動割合を計算する関数
 function calculatePercentages() {
     for (const boothId in initializedBoothData) {
@@ -101,41 +129,47 @@ interface NavigationPercentageProps {
 // percentageDataの取得と円グラフの表示
 function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps) {
     const percentages = percentageData[boothId];
-
-    // // すべての値が "0.0" の場合、全体を表示しない
-    if (!percentages || ["5HGS6W","7JDZVP","94VPFZ","FZVSW0","HDE5W4","HF5W2T","SHSQ4A","WA067Z", "Y6XBJH", ].every(key => percentages[key] === "0.0")) {
-        return null;
-    }
     // percentagesのデータを数値の大きい順にソートし、上位3つを取り出す
     const sortedBoothIds = Object.entries(percentages)
     .map(([boothId, value]) => ({ boothId, percentage: parseFloat(value) }))
     .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 3)
-    .map(entry => entry.boothId); // boothId のみを抽出して string の配列に
-
-// 上位3つのboothIdを変数に代入
-const top1: string = sortedBoothIds[0] || "";
-const top2: string = sortedBoothIds[1] || "";
-const top3: string = sortedBoothIds[2] || "";
-console.log("Top 1 Booth ID:", top1);
-console.log("Top 2 Booth ID:", top2);
-console.log("Top 3 Booth ID:", top3);
-        // チャートデータの設定
+    .slice(0, 9)
+    .map(entry => entry.boothId);
+    // 上位3つのboothIdを変数に代入
+    const top1: string = sortedBoothIds[0] || "";
+    const top2: string = sortedBoothIds[1] || "";
+    const top3: string = sortedBoothIds[2] || "";
+    const top4: string = sortedBoothIds[3] || "";
+    const top5: string = sortedBoothIds[4] || "";
+    const top6: string = sortedBoothIds[5] || "";
+    const top7: string = sortedBoothIds[6] || "";
+    const top8: string = sortedBoothIds[7] || "";
+    const top9: string = sortedBoothIds[8] || "";
+    const top10: string = sortedBoothIds[9] || "";
+    // SCHOOL_NAMEからschoolNameを、SCHOOL_DATAからcolorを取得
+    const labels = [SCHOOL_NAME[top1].schoolName, SCHOOL_NAME[top2].schoolName, SCHOOL_NAME[top3].schoolName];
+    const backgroundColor = [SCHOOL_DATA[top1].color, SCHOOL_DATA[top2].color, SCHOOL_DATA[top3].color,SCHOOL_DATA[top4].color, SCHOOL_DATA[top5].color, SCHOOL_DATA[top6].color,SCHOOL_DATA[top7].color, SCHOOL_DATA[top8].color, SCHOOL_DATA[top9].color, SCHOOL_DATA[top10]?.color || "#FFA500"];
+    // チャートデータの設定
     const data = {
-        // labels: [ top1,top2,top3],
-        labels:sortedBoothIds.map(([id]) => SCHOOL_DATA[id]?.schoolName || id),
+        labels: labels,
         datasets: [
             {
                 data: [
                     parseFloat(percentages[top1]) || 0,
                     parseFloat(percentages[top2]) || 0,
-                    parseFloat(percentages[top3]) || 0
+                    parseFloat(percentages[top3]) || 0,
+                    parseFloat(percentages[top4]) || 0,
+                    parseFloat(percentages[top5]) || 0,
+                    parseFloat(percentages[top6]) || 0,
+                    parseFloat(percentages[top7]) || 0,
+                    parseFloat(percentages[top8]) || 0,
+                    parseFloat(percentages[top9]) || 0,
+                    parseFloat(percentages[top10]) || 0
                 ],
-                backgroundColor: ["#FFA500", "#00BFFF", "#32CD32"],
+                backgroundColor: backgroundColor,
             },
         ],
     };
-
     const options = {
         responsive: true,
         plugins: {
@@ -152,12 +186,11 @@ console.log("Top 3 Booth ID:", top3);
             }
         }
     };
-
     return (
         <div
             style={{
                 position: "absolute",
-                top: `${pinY - 20}vh`,
+                top: `${pinY - 10}vh`,
                 left: `${pinX+4.9}vw`,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 padding: "1vw",
@@ -174,12 +207,10 @@ console.log("Top 3 Booth ID:", top3);
     );
 }
 
-
 export default function RoutePrediction() {
     const [postedBoothIdList] = useState<string[]>([]);
     const [hoveredBoothId, setHoveredBoothId] = useState<string | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState({ pinX: 0, pinY: 0 });
-
     const getPinStyle = (pinX: number, pinY: number, boothId: string): CSSProperties => ({
         position: "absolute" as "absolute",
         top: `${pinY}vh`,
@@ -193,7 +224,6 @@ export default function RoutePrediction() {
                 "floatUpDown 2s ease-in-out infinite"
             )
     });
-
     const getAnimationStyle = () => {
         return `
         @keyframes floatUpDown {
@@ -206,16 +236,13 @@ export default function RoutePrediction() {
         }`;
     };
 
-    const handleMouseEnter = (boothId: string, pinX: number, pinY: number) => {
-        // ピンにカーソルが乗ったときの処理
+    const handleMouseEnter = (boothId: string, pinX: number, pinY: number) => { // ピンにカーソルが乗ったとき
         setHoveredBoothId(boothId);
         setTooltipPosition({ pinX, pinY });
     };
-    const handleMouseLeave = () => {
-        // ピンからカーソルが離れたときの処理
+    const handleMouseLeave = () => { // 離れたときの処理
         setHoveredBoothId(null);
     };
-
     return (
         <div>
             <div>スタンプポイントの経路予測</div>
