@@ -77,7 +77,7 @@ const data = {
 
 //グラフのオプション
 const options = {
-    responsive: true,
+    // responsive: true,
     plugins: {
         legend: {
             position: "top" as const,
@@ -91,6 +91,8 @@ const options = {
 
 export default function EntryStatistics() {
     return (
+        <div style={{ width: "600px", height: "600px" }}>
         <Pie options={options} data={data}/>
+        </div>
     )
 }
