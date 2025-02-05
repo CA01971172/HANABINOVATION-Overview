@@ -5,6 +5,7 @@ import { SCHOOL_DATA, BOOTH_ID_LIST } from "../utils/config";
 import createdHanabiPin from "../images/マップピン/花火作成済みマップピン.png";
 import { analysisData } from "../utils/analysisData";
 import { Doughnut } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 // 名前変更
 const SCHOOL_NAME: { [boothId: string]: { schoolName: string } } = {
@@ -175,17 +176,20 @@ function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps
         plugins: {
             legend: {
                 display: true,
-                position: "top" as const,
+                position: "top" as const, // ← `as const` を付ける
             },
-            tooltip: {
-                callbacks: {
-                    label: function(context: any) {
-                        return `${context.label}: ${context.raw}%`;
-                    }
+            datalabels: {
+                color: "#003",
+                anchor: "end" as const,
+                align: "end" as const,
+                offset: -10, // 数値を増やすと円の外側へ移動、減らすと内側へ
+                formatter: (value: number) => value > 0 ? `${value}%` : null, // ← 0% を非表示
+                font: {
+                    size: 13
                 }
             }
         }
-    };
+    };    
     return (
         <div
             style={{
@@ -197,12 +201,13 @@ function NavigationPercentage({ boothId, pinX, pinY }: NavigationPercentageProps
                 borderRadius: "10px",
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
                 zIndex: 1000,
-                fontSize: "1vw",
+                fontSize: "10vw",
                 textAlign: "center",
-                width: "12vw",
+                width: "15vw",
+                height: "200px"
             }}
         >
-            <Doughnut data={data} options={options} />
+            <Doughnut data={data} options={options} plugins={[ChartDataLabels]} />
         </div>
     );
 }
@@ -240,8 +245,10 @@ export default function RoutePrediction() {
         setHoveredBoothId(boothId);
         setTooltipPosition({ pinX, pinY });
     };
-    const handleMouseLeave = () => { // 離れたときの処理
-        setHoveredBoothId(null);
+    const handleMouseLeave = (pinX: number, pinY: number) => { // 離れたときの処理
+        if(pinX+40 > pinX && pinY+40 > pinY){ // 未完(グラフからカーソルが離れたタイミングで表示を消すようにしたかった)
+            setHoveredBoothId(null);
+        }
     };
     return (
         <div>
@@ -275,7 +282,7 @@ export default function RoutePrediction() {
                                 }
                                 style={getPinStyle(schoolInfo.mapData.pinX, schoolInfo.mapData.pinY, boothId)}
                                 onMouseEnter={() => handleMouseEnter(boothId, schoolInfo.mapData.pinX, schoolInfo.mapData.pinY)} // マウスオーバーイベントを追加
-                                onMouseLeave={handleMouseLeave} // マウスアウトイベントを追加
+                                onMouseLeave={() => handleMouseLeave(schoolInfo.mapData.pinX, schoolInfo.mapData.pinY)} // マウスアウトイベントを追加
                             />
                             <div
                                 style={{
